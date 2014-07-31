@@ -1,0 +1,132 @@
+
+
+/*exec function StartFire( optional byte FireModeNum )
+{
+	if(FireModeNum == Attack_Stab && class<LSModWeapon_DOUBLE_LSMod>(Pawn.Weapon.Class) != none)
+	{
+		return;
+	}
+	
+	super.StartFire( FireModeNum );
+}*/
+
+exec function PerformAim()
+{
+	if (class<LSModWeapon_Crossbow2> (Pawn.Weapon.Class) != none)
+		StartFire(1);
+}
+
+exec function LightsOn(bool bShowLights)
+{
+	Playercfg.default.bLightsOn = bShowLights;
+	
+	PlayerCFG.static.StaticSaveConfig();
+}
+
+function bool TurnedLightsOn()
+{
+	return PlayerCfg.default.bLightsOn;
+}
+
+
+
+///////////////////////////////////////////////////////////////////////////////BLOOMFUNCTIONS/////////////////////////////////////////////////////////////////////
+
+reliable client function FixBloom()
+{
+	local LocalPlayer LP;
+	local PostProcessSettings BloomSettings;
+	
+	LP = LocalPlayer(Player);
+	`logalways("bOverrideOn="@bOverrideOn);
+	
+	`logalways("Localplayer_in_the_controller="@AOCLocalplayer(LocalPlayer(Player)));
+	`logalways("Localplayer_in_the_controller2="@LocalPlayer(Player));
+	`logalways("Localplayer_in_the_controller3="@LP);
+	
+	
+	if(bOverrideOn == True)
+	{
+		LP.ClearPostProcessSettingsOverride(0.0);
+		`logalways("PPOverrideCLEARED");
+		bOverrideOn = false;
+	}
+	
+	if(LP != none)
+	{
+		if((worldinfo.DefaultPostProcessSettings.bOverride_EnableBloom == true) && (worldinfo.DefaultPostProcessSettings.bEnableBloom == false))
+		{			
+			BloomSettings = worldinfo.DefaultPostProcessSettings;
+			
+			BloomSettings.bEnableBloom = true;
+			BloomSettings.bOverride_Bloom_Scale = true;
+			BloomSettings.Bloom_Scale = 0.35f;
+			BloomSettings.bOverride_DOF_BlurBloomKernelSize = true;
+			BloomSettings.DOF_BlurBloomKernelSize = 10.f;
+
+			LP.OverridePostProcessSettings(BloomSettings, 0.0);
+			bOverrideOn = True;
+		}
+	}
+	
+}
+	
+reliable client function ResetBloom()
+{	
+	local LocalPlayer LocalPlayer;
+	
+	Localplayer = LocalPlayer(Player);
+	
+	LocalPlayer.ClearPostProcessSettingsOverride(0.0);
+	`logalways("PPOverrideCLEAREDonLogout");
+	bOverrideOn = false;
+}
+
+simulated event Destroyed()
+{
+	Local LocalPlayer LocalPlayer;
+	
+	if(AOCPRI(PlayerReplicationInfo).bbot)
+	{
+		Super.Destroyed();
+		`logalways("BotDESTROYED");
+	}
+	
+	else if (WorldInfo.NetMode == NM_STANDALONE || Role < ROLE_Authority)
+	{
+		Localplayer = LocalPlayer(Player);
+	
+		LocalPlayer.ClearPostProcessSettingsOverride(0.0);
+		`logalways("PPOverrideCLEAREDonDESTROYED");
+		bOverrideOn = false;
+		Super.Destroyed();
+	}
+	else
+	{
+		Super.Destroyed();
+	}
+}	
+
+///////////////////////////////////////////////////////////////////////////////BLOOMFUNCTIONS_END/////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////DW_PROJECTILE_FUNCTIONS_BEGIN////////////////////////////////////////////////////////////////////
+
+
+function bool DrawWeaponTracers()
+{
+	return bDrawWeaponTracers;
+}
+
+exec function aoc_drawtracer( bool draw )
+{
+	bDrawWeaponTracers = draw;
+	
+	super.aoc_drawtracer( draw );
+}
+
+DefaultProperties
+{
+Playercfg = class'LSModPlayerCFG'
+bOverrideOn = false
+bDrawWeaponTracers = false
+}

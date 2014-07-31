@@ -1,0 +1,18 @@
+
+	Begin Object class=PointLightComponent name=LComp
+		CastShadows=false
+		bEnabled=true
+		Radius=200.000000
+		FalloffExponent=6.000000
+		Brightness=10.0000
+		CastStaticShadows=False
+		CastDynamicShadows=False
+		bCastCompositeShadow=False
+		bAffectCompositeShadowDirection=False
+    End Object
+	
+	//	LaserColor=(R=0,G=200,B=255)
+	LaserColor=  (R=0.000000,G=0.065000,B=0.250000,A=1.000000)
+
+	
+    MyLight = LComp

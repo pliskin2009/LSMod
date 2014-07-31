@@ -1,0 +1,14 @@
+	
+	Begin Object class=PointLightComponent name=LComp2
+		LightColor=(R=133,G=255,B=0)
+		CastShadows=false
+		bEnabled=true
+		Radius=200.000000
+		FalloffExponent=6.000000
+		Brightness=0.80000  //reduced it.too jarring
+		CastStaticShadows=False
+		CastDynamicShadows=False
+		bCastCompositeShadow=False
+		bAffectCompositeShadowDirection=False
+    End Object
+    MyLight2=LComp2

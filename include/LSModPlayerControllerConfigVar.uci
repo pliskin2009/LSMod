@@ -1,0 +1,4 @@
+	implements(ILSModPlayerController);
+var class<LSModPlayerCFG> Playercfg;
+var bool bOverrideOn;
+var bool bDrawWeaponTracers;
